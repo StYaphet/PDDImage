@@ -29,12 +29,15 @@ typedef struct GPUTextureOptions {
     GLenum type;
 } GPUTextureOptions;
 
+// GPUImageFramebuffer类用于管理帧缓冲对象，负责帧缓冲对象的创建和销毁，读取帧缓冲内容，其中纹理附件涉及到了相关的纹理选项。
+// 因此，它提供的属性也是和帧缓存、纹理附件、纹理选项等相关
+
 @interface PDDImageFramebuffer : NSObject
 
-@property (readonly) CGSize size;
-@property (readonly) GPUTextureOptions textureOptions;
-@property (readonly) GLuint texture;
-@property (readonly) BOOL missingFramebuffer;
+@property (readonly) CGSize size;                           // 帧缓存大小
+@property (readonly) GPUTextureOptions textureOptions;      // 纹理选项
+@property (readonly) GLuint texture;                        // 纹理缓存
+@property (readonly) BOOL missingFramebuffer;               // 是否仅有纹理没有帧缓存
 
 // Initialization and teardown
 - (id)initWithSize:(CGSize)framebufferSize;
