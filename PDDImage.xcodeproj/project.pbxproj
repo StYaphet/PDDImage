@@ -17,6 +17,7 @@
 		6E4A53EA20BCC7B2001621B5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53E220BCC7B2001621B5 /* AppDelegate.m */; };
 		6E4A53EB20BCC7B2001621B5 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E4A53E320BCC7B2001621B5 /* Info.plist */; };
 		6E4A53F120BCC81E001621B5 /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53F020BCC81E001621B5 /* GLProgram.m */; };
+		6E4A53F720BCD62A001621B5 /* PDDImageContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53F620BCD62A001621B5 /* PDDImageContext.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		6E4A53EC20BCC7E3001621B5 /* PDDImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImage.h; sourceTree = "<group>"; };
 		6E4A53EF20BCC81E001621B5 /* GLProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLProgram.h; sourceTree = "<group>"; };
 		6E4A53F020BCC81E001621B5 /* GLProgram.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLProgram.m; sourceTree = "<group>"; };
+		6E4A53F520BCD629001621B5 /* PDDImageContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImageContext.h; sourceTree = "<group>"; };
+		6E4A53F620BCD62A001621B5 /* PDDImageContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageContext.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +113,8 @@
 				6E4A53EC20BCC7E3001621B5 /* PDDImage.h */,
 				6E4A53EF20BCC81E001621B5 /* GLProgram.h */,
 				6E4A53F020BCC81E001621B5 /* GLProgram.m */,
+				6E4A53F520BCD629001621B5 /* PDDImageContext.h */,
+				6E4A53F620BCD62A001621B5 /* PDDImageContext.m */,
 			);
 			path = PDDImage;
 			sourceTree = "<group>";
@@ -284,6 +289,7 @@
 			files = (
 				6E4A53E920BCC7B2001621B5 /* main.m in Sources */,
 				6E4A53F120BCC81E001621B5 /* GLProgram.m in Sources */,
+				6E4A53F720BCD62A001621B5 /* PDDImageContext.m in Sources */,
 				6E4A53E620BCC7B2001621B5 /* ViewController.m in Sources */,
 				6E4A53EA20BCC7B2001621B5 /* AppDelegate.m in Sources */,
 			);
