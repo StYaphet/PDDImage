@@ -139,13 +139,25 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 
 - (void)generateTexture {
 
-    // TODO: @pdd 这里纹理创建需要再看一下流程
+    // TODO: @pdd 这里是创建纹理的流程
     glActiveTexture(GL_TEXTURE1);
     glGenTextures(1, &_texture);
     glBindTexture(GL_TEXTURE_2D, _texture);
+
+    // https://learnopengl-cn.readthedocs.io/zh/latest/01%20Getting%20started/06%20Textures/
+    // 设置纹理过滤方式，常用的纹理过滤方式有 GL_NEAREST 、 GL_LINEAR
+    // 当进行放大(magnify)和缩小(minify)操作的时候可以设置纹理过滤的选项，比如你可以在纹理被缩小的时候使用邻近过滤，被放大时使用线性过滤。
+    // 我们需要使用 glTexParameter* 函数为放大和缩小指定过滤方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _textureOptions.minFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _textureOptions.magFilter);
+
     // This is necessary for non-power-of-two textures
+    // 设置纹理的环绕方式，环绕方式有GL_REPEAT、GL_MIRRORED_REPEAT、GL_CLAMP_TO_EDGE、GL_CLAMP_TO_BORDER
+    // 每个选项都可以使用 glTexParmaters* 函数对单独的一个坐标轴进行设置
+    // 因为这里是2D纹理，所以可以在对两个坐标轴(s、t)进行设置
+    // 第一个参数指定了纹理目标，因为使用的是2D纹理，因此纹理目标是GL_TEXTURE_2D。
+    // 第二个参数需要指定设置的选项与应用的纹理轴。我们打算配置的是WRAP选项，并且指定S和T轴。
+    // 最后一个参数需要我们传递一个环绕方式，即_textureOptions中的warpS与warpT。
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _textureOptions.warpS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _textureOptions.warpT);
 
