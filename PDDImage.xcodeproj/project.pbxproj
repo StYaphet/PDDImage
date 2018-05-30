@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E10CFEB20BCE82F0014BC0A /* PDDImageFramebuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E10CFEA20BCE82F0014BC0A /* PDDImageFramebuffer.m */; };
 		6E4A53C120BCC77D001621B5 /* PDDImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53C020BCC77D001621B5 /* PDDImageTests.m */; };
 		6E4A53CC20BCC77D001621B5 /* PDDImageUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53CB20BCC77D001621B5 /* PDDImageUITests.m */; };
 		6E4A53E520BCC7B2001621B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E4A53DB20BCC7B2001621B5 /* Assets.xcassets */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6E10CFE920BCE82F0014BC0A /* PDDImageFramebuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImageFramebuffer.h; sourceTree = "<group>"; };
+		6E10CFEA20BCE82F0014BC0A /* PDDImageFramebuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageFramebuffer.m; sourceTree = "<group>"; };
 		6E4A53A420BCC77C001621B5 /* PDDImage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDDImage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4A53BC20BCC77D001621B5 /* PDDImageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PDDImageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4A53C020BCC77D001621B5 /* PDDImageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageTests.m; sourceTree = "<group>"; };
@@ -115,6 +118,8 @@
 				6E4A53F020BCC81E001621B5 /* GLProgram.m */,
 				6E4A53F520BCD629001621B5 /* PDDImageContext.h */,
 				6E4A53F620BCD62A001621B5 /* PDDImageContext.m */,
+				6E10CFE920BCE82F0014BC0A /* PDDImageFramebuffer.h */,
+				6E10CFEA20BCE82F0014BC0A /* PDDImageFramebuffer.m */,
 			);
 			path = PDDImage;
 			sourceTree = "<group>";
@@ -287,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E10CFEB20BCE82F0014BC0A /* PDDImageFramebuffer.m in Sources */,
 				6E4A53E920BCC7B2001621B5 /* main.m in Sources */,
 				6E4A53F120BCC81E001621B5 /* GLProgram.m in Sources */,
 				6E4A53F720BCD62A001621B5 /* PDDImageContext.m in Sources */,
@@ -456,7 +462,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8H2FDT6QCT;
-				INFOPLIST_FILE = PDDImage/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PDDImage/Main/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Pandada.PDDImage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -470,7 +476,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8H2FDT6QCT;
-				INFOPLIST_FILE = PDDImage/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PDDImage/Main/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Pandada.PDDImage;
 				PRODUCT_NAME = "$(TARGET_NAME)";
