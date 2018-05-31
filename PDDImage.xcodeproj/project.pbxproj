@@ -19,6 +19,7 @@
 		6E4A53EB20BCC7B2001621B5 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E4A53E320BCC7B2001621B5 /* Info.plist */; };
 		6E4A53F120BCC81E001621B5 /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53F020BCC81E001621B5 /* GLProgram.m */; };
 		6E4A53F720BCD62A001621B5 /* PDDImageContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53F620BCD62A001621B5 /* PDDImageContext.m */; };
+		6EACED9720BF8CA000FC0AF9 /* PDDImageFramebufferCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EACED9620BF8CA000FC0AF9 /* PDDImageFramebufferCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,8 @@
 		6E4A53F020BCC81E001621B5 /* GLProgram.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GLProgram.m; sourceTree = "<group>"; };
 		6E4A53F520BCD629001621B5 /* PDDImageContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImageContext.h; sourceTree = "<group>"; };
 		6E4A53F620BCD62A001621B5 /* PDDImageContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageContext.m; sourceTree = "<group>"; };
+		6EACED9520BF8CA000FC0AF9 /* PDDImageFramebufferCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImageFramebufferCache.h; sourceTree = "<group>"; };
+		6EACED9620BF8CA000FC0AF9 /* PDDImageFramebufferCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageFramebufferCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,8 @@
 				6E4A53F620BCD62A001621B5 /* PDDImageContext.m */,
 				6E10CFE920BCE82F0014BC0A /* PDDImageFramebuffer.h */,
 				6E10CFEA20BCE82F0014BC0A /* PDDImageFramebuffer.m */,
+				6EACED9520BF8CA000FC0AF9 /* PDDImageFramebufferCache.h */,
+				6EACED9620BF8CA000FC0AF9 /* PDDImageFramebufferCache.m */,
 			);
 			path = PDDImage;
 			sourceTree = "<group>";
@@ -297,6 +302,7 @@
 				6E4A53F120BCC81E001621B5 /* GLProgram.m in Sources */,
 				6E4A53F720BCD62A001621B5 /* PDDImageContext.m in Sources */,
 				6E4A53E620BCC7B2001621B5 /* ViewController.m in Sources */,
+				6EACED9720BF8CA000FC0AF9 /* PDDImageFramebufferCache.m in Sources */,
 				6E4A53EA20BCC7B2001621B5 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
