@@ -31,6 +31,7 @@ void runSynchronouslyOnVideoProcessingQueue(void (^block)(void)) {
 @interface PDDImageFramebuffer () {
     GLuint framebuffer;
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+	// renderTarget 与 renderTexture 是用来干嘛的？
     CVPixelBufferRef renderTarget;
     CVOpenGLESTextureRef renderTexture;
     NSUInteger readLockCount;
@@ -248,6 +249,293 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 #endif
         glBindTexture(GL_TEXTURE_2D, 0);
     });
+}
+
+- (void)destoryFramebuffer {
+	
+	runSynchronouslyOnVideoProcessingQueue(^{
+		[PDDImageContext useImageProcesssingContext];
+		
+		if (framebuffer) {
+			glDeleteBuffers(1, &framebuffer);
+			framebuffer = 0;
+		}
+		
+		if ([GPUImageContext supportFastTextureUpload] && [!_missingFramebuffer]) {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+			// TODO: @pdd renderTarget是什么？
+			if (renderTarget) {
+				CFRelease(renderTarget);
+				renderTarget = NULL;
+			}
+			
+			if (renderTexture) {
+				CFRelease(renderTexture);
+				renderTexture = NULL;
+			}
+#endif
+		} else {
+			glDeleteTextures(1, &_texture);
+		}
+	});
+}
+
+#pragma mark -
+#pragma mark Usage
+
+- (void)activateFramebuffer {
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glViewport(0, 0, (int)_size.width, (int)_size.height);
+}
+
+#pragma mark -
+#pragma mark Reference counting
+
+- (void)lock {
+	
+	if (referenceCountingDisabled) {
+		return;
+	}
+	
+	framebufferReferenceCount++;
+}
+
+- (void)unlock {
+	
+	if (referenceCountingDisabled) {
+		return;
+	}
+	
+	NSAssert(framebufferReferenceCount, @"Tried to overrelease a framebuffer, did you forget to call -useNextFrameForImageCapture before using -imageFromCurrentFramebuffer?");
+	framebufferReferenceCount--;
+	if (framebufferReferenceCount < 1) {
+		[[PDDImageContext sharedFramebufferCache] returnFramebufferToCache:self];
+	}
+}
+
+- (void)clearAllLocks;
+{
+	framebufferReferenceCount = 0;
+}
+
+- (void)disableReferenceCounting;
+{
+	referenceCountingDisabled = YES;
+}
+
+- (void)enableReferenceCounting;
+{
+	referenceCountingDisabled = NO;
+}
+
+#pragma mark -
+#pragma mark Image capture
+
+void dataProviderReleaseCallback (void *info, const void *data, size_t size) {
+	
+	free((void *)data);
+}
+
+void dataProviderUnlockCallback (void *info, const void *data, size_t size) {
+	
+	PDDImageFramebuffer *framebuffer = (__bridge_transfer PDDImageFramebuffer*)info;
+	
+	// TODO: @pdd 这个函数是干嘛用的？
+	[framebuffer restoreRenderTarget];
+	[framebuffer unlock];
+	// TODO: @pdd 还有这个
+	[[PDDImageContext sharedFramebufferCache] removeFramebufferFromActiveImageCaptureList:framebuffer];
+}
+
+
+// 通过帧缓存生成图像的时候，GPUImage使用CGImage相关的API生成相关的位图对象。
+// CGImageRef这个结构用来创建像素位图，可以通过操作存储的像素位来编辑图片
+// typedef struct CGImage *CGImageRef;
+
+/**
+ 通过CGImageCreate方法，我们可以创建出一个CGImageRef类型的对象
+ 参数：
+  width 图片宽度像素
+  height 图片高度像素
+  bitsPerComponent 每个颜色的比特数，例如在rgba32模式下为8
+  bitsPerPixel 每个像素的总比特数
+  bytesPerRow 每一行占用的字节数，注意这里的单位是字节
+  space 颜色空间模式
+  bitmapInfo 位图像素布局枚举
+  provider 数据源提供者
+  decode 解码渲染数组
+  shouldInterpolate 是否抗锯齿
+  intent 图片相关参数
+ 返回值：
+  位图
+ 
+CGImageRef CGImageCreate(size_t width,
+						 size_t height,
+						 size_t bitsPerComponent,
+						 size_t bitsPerPixel,
+						 size_t bytesPerRow,
+						 CGColorSpaceRef space,
+						 CGBitmapInfo bitmapInfo,
+						 CGDataProviderRef provider,
+						 const CGFloat *decode,
+						 bool shouldInterpolate,
+						 CGColorRenderingIntent intent)
+*/
+
+- (CGImageRef)newCGImageFromFramebufferContents {
+	
+	// CGImage 只能由 normal 的color texture 中创建
+	NSAssert(self.textureOptions.imternalFormat == GL_RGBA, @"For conversion to a CGImage the output texture format for this filter must be GL_RGBA.");
+	NSAssert(self.textureOptions.type == GL_UNSIGNED_BYTE, @"For conversion to a CGImage the type of the output texture of this filter must be GL_UNSIGNED_BYTE.");
+	
+	__block CGImageRef cgImageFromBytes;
+	
+	runSynchronouslyOnVideoProcessingQueue(^{
+		// 设置OpenGLES上下文
+		[PDDImageContext useImageProcessingContext];
+		
+		// 如果使用纹理缓存读取纹理，纹理的宽度必须被填充为8(32字节)的倍数。
+		// 图片的总大小 = 帧缓存大小 * 每个像素点字节数
+		NSUInteger totalBytesForImage = (int)_size.width * (int)_size.height * 4;
+		
+		GLubyte *rawImagePixels;
+		
+		CGDataProviderRef dataProvider = NULL;
+		
+		// 在读取图片数据的时候，根据设备是否支持 CoreVideo 框架，会选择使用 CVPixelBufferGetBaseAddress 或者 glReadPixels 读取帧缓存中的数据。
+		if ([PDDImageContext supportsFastTextureUpload]) {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+			//图像宽度(字节数) = 每行图像数据大小 / 每个像素点字节数
+			NSUInteger paddedWidthOfImage = CVPixelBufferGetBytesPerRow(renderTarget) / 4.0;
+			// 图像大小 = 图像宽度 * 高度 * 每个像素点字节数
+			// TODO: pdd 这个为什么不从renderTarget中去取呢？
+			NSUInteger paddedBytesFromImage = paddedWidthOfImage * (int)_size.height * 4;
+			
+			// 等待OpenGL指令执行完成，与glFlush有区别
+			glFinish();
+			CFRetain(renderTarget); // I need to retain the pixel buffer here and release in the data source callback to prevent its bytes from being prematurely deallocated during a photo write operation
+			rawImagePixels = (GLubyte *)CVPixelBufferGetBaseAddress(renderTarget);
+			// 创建CGDataProviderRef对象
+			dataProvider = CGDataProviderCreateWithData((__bridge_retained void*)self,
+														rawImagePixels,
+														paddedBytesFromImage,
+														dataProviderUnlockCallback);
+			[[PDDImageContext sharedFramebufferCache] addFramebufferToActiveImageCaptureList:self]; // In case the framebuffer is swapped out on the filter, need to have a strong reference to it somewhere for it to hang on while the image is in existence
+		} else {
+			[self activateFramebuffer];
+			rawImagePixels = (GLubyte *)malloc(totalBytesForImage);
+			glReadPixels(0, 0, (int)_size.width, (int)_size.height, GL_RGBA, GL_UNSIGNED_BYTE, rawImagePixels);
+			dataProvider = CGDataProviderCreateWithData(NULL, rawImagePixels, totalBytesForImage, dataProviderReleaseCallback);
+			[self unlock]; // Don't need to keep this around anymore
+		}
+		
+		CGColorSpaceRef defaultRGBColorSpace = CGColorSpaceCreateDeviceRGB();
+		if ([PDDImageContext supportsFastTextureUpload]) {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+			cgImageFromBytes = CGImageCreate((int)_size.width,
+											 (int)_size.height,
+											 8,
+											 32,
+											 CVPixelBufferGetBytesPerRow(renderTarget),
+											 defaultRGBColorSpace,
+											 kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst,
+											 dataProvider,
+											 NULL,
+											 NO,
+											 kCGRenderingIntentDefault);
+#else
+#endif
+		} else {
+			cgImageFromBytes = CGImageCreate((int)_size.width, (int)_size.height, 8, 32, 4 * (int)_size.width, defaultRGBColorSpace, kCGBitmapByteOrderDefault | kCGImageAlphaLast, dataProvider, NULL, NO, kCGRenderingIntentDefault);
+		}
+		
+		CGDataProviderRelease(dataProvider);
+		CGColorSpaceRelease(defaultRGBColorSpace);
+	});
+	
+	return cgImageFromBytes;
+}
+
+- (void)restoreRenderTarget {
+	
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+	[self unlockAfterReading];
+	CFRelease(renderTarget);
+#else
+#endif
+}
+
+- (void)lockForReading {
+	
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+	if ([PDDImageContext supportsFastTextureUpload])
+	{
+		if (readLockCount == 0)
+		{
+			// TODO: @pdd 与下边配对使用的函数
+			CVPixelBufferLockBaseAddress(renderTarget, 0);
+		}
+		readLockCount++;
+	}
+#endif
+}
+
+- (void)unlockAfterReading {
+	
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+	if ([PDDImageContext supportsFastTextureUpload])
+	{
+		NSAssert(readLockCount > 0, @"Unbalanced call to -[GPUImageFramebuffer unlockAfterReading]");
+		readLockCount--;
+		if (readLockCount == 0)
+		{
+			// TODO: @pdd 与上边配对使用的函数
+			CVPixelBufferUnlockBaseAddress(renderTarget, 0);
+		}
+	}
+#endif
+}
+
+- (NSUInteger)bytesPerRow {
+	
+	if ([PDDImageContext supportsFastTextureUpload])
+	{
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+		return CVPixelBufferGetBytesPerRow(renderTarget);
+#else
+		return _size.width * 4; // TODO: do more with this on the non-texture-cache side
+#endif
+	}
+	else
+	{
+		return _size.width * 4;
+	}
+}
+
+- (GLubyte *)byteBuffer {
+	
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+	[self lockForReading];
+	GLubyte * bufferBytes = CVPixelBufferGetBaseAddress(renderTarget);
+	[self unlockAfterReading];
+	return bufferBytes;
+#else
+	return NULL; // TODO: do more with this on the non-texture-cache side
+#endif
+}
+
+- (CVPixelBufferRef )pixelBuffer {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+	return renderTarget;
+#else
+	return NULL; // TODO: do more with this on the non-texture-cache side
+#endif
+}
+
+- (GLuint)texture {
+	//    NSLog(@"Accessing texture: %d from FB: %@", _texture, self);
+	return _texture;
 }
 
 @end
