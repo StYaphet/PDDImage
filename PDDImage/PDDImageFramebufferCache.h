@@ -16,7 +16,7 @@
 - (PDDImageFramebuffer *)fetchFramebufferForSize:(CGSize)framebufferSize textureOptions:(GPUTextureOptions)textureOptions onlyTexture:(BOOL)onlyTexture;
 - (PDDImageFramebuffer *)fetchFramebufferForSize:(CGSize)framebufferSize onlyTexture:(BOOL)onlyTexture;
 - (void)retureFrambufferToCache:(PDDImageFramebuffer *)framebuffer;
-- (void)pergeAllUnassignedFramebuffers;
+- (void)purgeAllUnassignedFramebuffers;
 - (void)addFramebufferToActiveImageCaptureList:(PDDImageFramebuffer *)framebuffer;
 - (void)removeFrambufferFromActiveImageCaptureList:(PDDImageFramebuffer *)framebuffer;
 

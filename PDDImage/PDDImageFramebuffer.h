@@ -24,7 +24,7 @@ typedef struct GPUTextureOptions {
     GLenum magFilter;
     GLenum warpS;
     GLenum warpT;
-    GLenum imternalFormat;
+    GLenum internalFormat;
     GLenum format;
     GLenum type;
 } GPUTextureOptions;
