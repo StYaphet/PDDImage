@@ -75,7 +75,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 
     if (_missingFramebuffer) {
         runSynchronouslyOnVideoProcessingQueue(^{
-//            [PDDImageContext useImageProcessingContext];
+            [PDDImageContext useImageProcessingContext];
             [self generateTexture];
             framebuffer = 0;
         });
@@ -168,80 +168,80 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 - (void)generateFramebuffer {
 
     runSynchronouslyOnVideoProcessingQueue(^{
-//        [PDDImageContext useImageProcessingContext];
+        [PDDImageContext useImageProcessingContext];
 
         glGenFramebuffers(1, &framebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
         // 判断是否支持快速纹理上传（实际上是判断CVOpenGLESTextureCacheCreate是否可用）
-//        if ([PDDImageContext supportFastTextureUpload]) {
+        if ([PDDImageContext supportFastTextureUpload]) {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-        CVOpenGLESTextureCacheRef coreVideoTextureCache = [[PDDImageContext sharedImageProcessingContext] coreVideoTextureCache];
+            CVOpenGLESTextureCacheRef coreVideoTextureCache = [[PDDImageContext sharedImageProcessingContext] coreVideoTextureCache];
 
-        // 这里是copy别人的代码，原地址在这：http://allmybrain.com/2011/12/08/rendering-to-a-texture-with-ios-5-texture-cache-api/
-        // 这篇文章适用于那些不一定想在屏幕上渲染图像，但想执行一些OpenGL操作，然后再读取图像的人。
-        // 首先，要渲染到纹理，您需要一个与OpenGL纹理缓存兼容的图像。 使用相机API创建的图像已经兼容，您可以立即映射它们以进行输入。
-        // 假设你想创建一个图像来渲染，然后读出来做一些其他的处理。 您必须创建具有特殊属性的图像。 图像的属性必须具有kCVPixelBufferIOSurfacePropertiesKey作为字典的键之一。
-        // 下面这些代码就是创建这样的一个字典
-        CFDictionaryRef empty; // empty value for attr values.
-        CFMutableDictionaryRef attrs;
-        empty = CFDictionaryCreate(kCFAllocatorDefault,
-                                   NULL,
-                                   NULL,
-                                   0,
-                                   &kCFTypeDictionaryKeyCallBacks,
-                                   &kCFTypeDictionaryValueCallBacks); // our empty IOSurface properties dictionary
+            // 这里是copy别人的代码，原地址在这：http://allmybrain.com/2011/12/08/rendering-to-a-texture-with-ios-5-texture-cache-api/
+            // 这篇文章适用于那些不一定想在屏幕上渲染图像，但想执行一些OpenGL操作，然后再读取图像的人。
+            // 首先，要渲染到纹理，您需要一个与OpenGL纹理缓存兼容的图像。 使用相机API创建的图像已经兼容，您可以立即映射它们以进行输入。
+            // 假设你想创建一个图像来渲染，然后读出来做一些其他的处理。 您必须创建具有特殊属性的图像。 图像的属性必须具有kCVPixelBufferIOSurfacePropertiesKey作为字典的键之一。
+            // 下面这些代码就是创建这样的一个字典
+            CFDictionaryRef empty; // empty value for attr values.
+            CFMutableDictionaryRef attrs;
+            empty = CFDictionaryCreate(kCFAllocatorDefault,
+                                       NULL,
+                                       NULL,
+                                       0,
+                                       &kCFTypeDictionaryKeyCallBacks,
+                                       &kCFTypeDictionaryValueCallBacks); // our empty IOSurface properties dictionary
 
-        attrs = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                          1,
-                                          &kCFTypeDictionaryKeyCallBacks,
-                                          &kCFTypeDictionaryValueCallBacks);
-        CFDictionarySetValue(attrs, kCVPixelBufferIOSurfacePropertiesKey, empty);
+            attrs = CFDictionaryCreateMutable(kCFAllocatorDefault,
+                                              1,
+                                              &kCFTypeDictionaryKeyCallBacks,
+                                              &kCFTypeDictionaryValueCallBacks);
+            CFDictionarySetValue(attrs, kCVPixelBufferIOSurfacePropertiesKey, empty);
 
-        // 创建一个用于渲染的CVPixelBuffer，创建完成之后就有了一个pixelbuffer，它具有与纹理缓存一起使用的正确属性
-        CVReturn err = CVPixelBufferCreate(kCFAllocatorDefault, (int)_size.width, (int)_size.height, kCVPixelFormatType_32RGBA, attrs, &renderTarget);
-        if (err) {
-            NSLog(@"FBO size: %f, %f", _size.width, _size.height);
-            NSAssert(NO, @"Error at CVPixelBufferCreate %d", err);
-        }
+            // 创建一个用于渲染的CVPixelBuffer，创建完成之后就有了一个pixelbuffer，它具有与纹理缓存一起使用的正确属性
+            CVReturn err = CVPixelBufferCreate(kCFAllocatorDefault, (int)_size.width, (int)_size.height, kCVPixelFormatType_32RGBA, attrs, &renderTarget);
+            if (err) {
+                NSLog(@"FBO size: %f, %f", _size.width, _size.height);
+                NSAssert(NO, @"Error at CVPixelBufferCreate %d", err);
+            }
 
-        // 首先从renderTarget中创建一个纹理
-        err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
-                                                           coreVideoTextureCache,
-                                                           renderTarget,
-                                                           NULL,
-                                                           GL_TEXTURE_2D,
-                                                           _textureOptions.imternalFormat,
-                                                           (int)_size.width,
-                                                           (int)_size.height,
-                                                           _textureOptions.format,
-                                                           _textureOptions.type,
-                                                           0,
-                                                           &renderTexture);
+            // 首先从renderTarget中创建一个纹理
+            err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
+                                                               coreVideoTextureCache,
+                                                               renderTarget,
+                                                               NULL,
+                                                               GL_TEXTURE_2D,
+                                                               _textureOptions.imternalFormat,
+                                                               (int)_size.width,
+                                                               (int)_size.height,
+                                                               _textureOptions.format,
+                                                               _textureOptions.type,
+                                                               0,
+                                                               &renderTexture);
 
-        if (err) {
-            NSAssert(NO, @"Error at CVOpenGLESTextureCacheCreateTextureFromImage %d", err);
-        }
-        CFRelease(attrs);
-        CFRelease(empty);
+            if (err) {
+                NSAssert(NO, @"Error at CVOpenGLESTextureCacheCreateTextureFromImage %d", err);
+            }
+            CFRelease(attrs);
+            CFRelease(empty);
 
-        // 像设置其他纹理一样去设置该纹理
-        glBindTexture(CVOpenGLESTextureGetTarget(renderTexture), CVOpenGLESTextureGetName(renderTexture));
-        _texture = CVOpenGLESTextureGetName(renderTexture);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _textureOptions.warpS);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _textureOptions.warpT);
+            // 像设置其他纹理一样去设置该纹理
+            glBindTexture(CVOpenGLESTextureGetTarget(renderTexture), CVOpenGLESTextureGetName(renderTexture));
+            _texture = CVOpenGLESTextureGetName(renderTexture);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _textureOptions.warpS);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _textureOptions.warpT);
 
-        // 将纹理绑定要你想要渲染的framebuffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, CVOpenGLESTextureGetName(renderTexture), 0);
+            // 将纹理绑定要你想要渲染的framebuffer
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, CVOpenGLESTextureGetName(renderTexture), 0);
 #endif
-//        }
-//        else
-//        {
-        [self generateTexture];
-        glBindTexture(GL_TEXTURE_2D, _texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, _textureOptions.imternalFormat, (int)_size.width, (int)_size.height, 0, _textureOptions.format, _textureOptions.type, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
-//        }
+        }
+        else
+            {
+            [self generateTexture];
+            glBindTexture(GL_TEXTURE_2D, _texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, _textureOptions.imternalFormat, (int)_size.width, (int)_size.height, 0, _textureOptions.format, _textureOptions.type, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
+        }
 
 #ifndef NS_BLOCK_ASSERTIONS
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
