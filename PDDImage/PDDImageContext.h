@@ -27,15 +27,15 @@ typedef NS_ENUM(NSUInteger, PDDImageRotationMode) {
 @property (nonatomic, readonly) dispatch_queue_t contextQueue;
 @property (nonatomic, readwrite) GLProgram *currentShaderProgram;
 @property (nonatomic, readonly) EAGLContext *context;
-@property (readonly) CVOpenGLESTextureCacheRef *coreVideoTextureCache; // TODO: @pdd这里没写nonatomic，是atomic的吗
-@property (readonly) PDDImageFramebufferCache *frameBufferCache; // TODO: @pdd这里没写nonatomic，是atomic的吗
+@property (readonly) CVOpenGLESTextureCacheRef coreVideoTextureCache; // TODO: @pdd这里没写nonatomic，是atomic的吗
+@property (readonly) PDDImageFramebufferCache *framebufferCache; // TODO: @pdd这里没写nonatomic，是atomic的吗
 
-+ (void)contextKey;
++ (void *)contextKey;
 + (PDDImageContext *)sharedImageProcessingContext;
 + (dispatch_queue_t)sharedContextQueue;
 + (PDDImageFramebufferCache *)sharedFramebufferCache;
 + (void)useImageProcessingContext;
-- (void)userAsCurrentContext;
+- (void)useAsCurrentContext;
 + (void)setActiveShaderProgram:(GLProgram *)shaderProgram;
 - (void)setContextShaderProgram:(GLProgram *)shaderProgram;
 + (GLint)maximumTextureSizeForThisDevice;
