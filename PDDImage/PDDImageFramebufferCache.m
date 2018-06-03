@@ -16,7 +16,7 @@
 
 @interface PDDImageFramebufferCache () {
     // 为什么不用这个做缓存呢？
-    //    NSCache *framebufferCache;
+    // NSCache *framebufferCache;
     NSMutableDictionary *framebufferCache;
     NSMutableDictionary *framebufferTypeCounts;
     NSMutableArray *activeImageCaptureList; // Where framebuffers that may be lost by a filter, but which are still needed for a UIImage, etc., are stored
@@ -144,6 +144,32 @@
         NSString *textureHash = [NSString stringWithFormat:@"%@-%ld", lookupHash, (long)numberOfMatchingTextures];
         [framebufferCache setObject:framebuffer forKey:textureHash];
         [framebufferTypeCounts setObject:[NSNumber numberWithInteger:(numberOfMatchingTextures + 1)] forKey:lookupHash];
+    });
+}
+
+- (void)purgeAllUnassignedFramebuffers
+{
+    runSynchronouslyOnVideoProcessingQueue(^{
+        [framebufferCache removeAllObjects];
+        [framebufferTypeCounts removeAllObjects];
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+        CVOpenGLESTextureCacheFlush([[PDDImageContext sharedImageProcessingContext] coreVideoTextureCache], 0);
+#else
+#endif
+    });
+}
+
+- (void)addFramebufferToActiveImageCaptureList:(PDDImageFramebuffer *)framebuffer {
+
+    runSynchronouslyOnVideoProcessingQueue(^{
+        [activeImageCaptureList addObject:framebuffer];
+    });
+}
+
+- (void)removeFrambufferFromActiveImageCaptureList:(PDDImageFramebuffer *)framebuffer {
+
+    runSynchronouslyOnVideoProcessingQueue(^{
+        [activeImageCaptureList removeObject:framebuffer];
     });
 }
 
