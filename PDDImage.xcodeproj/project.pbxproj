@@ -20,6 +20,7 @@
 		6E4A53F120BCC81E001621B5 /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53F020BCC81E001621B5 /* GLProgram.m */; };
 		6E4A53F720BCD62A001621B5 /* PDDImageContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A53F620BCD62A001621B5 /* PDDImageContext.m */; };
 		6EACED9720BF8CA000FC0AF9 /* PDDImageFramebufferCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EACED9620BF8CA000FC0AF9 /* PDDImageFramebufferCache.m */; };
+		6EB1460120C3C7D400C37FC3 /* PDDImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EB1460020C3C7D400C37FC3 /* PDDImageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,8 @@
 		6E4A53F620BCD62A001621B5 /* PDDImageContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageContext.m; sourceTree = "<group>"; };
 		6EACED9520BF8CA000FC0AF9 /* PDDImageFramebufferCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImageFramebufferCache.h; sourceTree = "<group>"; };
 		6EACED9620BF8CA000FC0AF9 /* PDDImageFramebufferCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageFramebufferCache.m; sourceTree = "<group>"; };
+		6EB145FF20C3C7D400C37FC3 /* PDDImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDDImageView.h; sourceTree = "<group>"; };
+		6EB1460020C3C7D400C37FC3 /* PDDImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PDDImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +118,8 @@
 		6E4A53A620BCC77C001621B5 /* PDDImage */ = {
 			isa = PBXGroup;
 			children = (
+				6EB145FE20C3C7B500C37FC3 /* Outputs */,
+				6EB145FD20C3C76900C37FC3 /* Sources */,
 				6E4A53D920BCC7B2001621B5 /* Main */,
 				6E4A53EC20BCC7E3001621B5 /* PDDImage.h */,
 				6E4A53EF20BCC81E001621B5 /* GLProgram.h */,
@@ -161,6 +166,22 @@
 				6E4A53E420BCC7B2001621B5 /* ViewController.h */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		6EB145FD20C3C76900C37FC3 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		6EB145FE20C3C7B500C37FC3 /* Outputs */ = {
+			isa = PBXGroup;
+			children = (
+				6EB145FF20C3C7D400C37FC3 /* PDDImageView.h */,
+				6EB1460020C3C7D400C37FC3 /* PDDImageView.m */,
+			);
+			path = Outputs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,6 +325,7 @@
 				6E4A53E620BCC7B2001621B5 /* ViewController.m in Sources */,
 				6EACED9720BF8CA000FC0AF9 /* PDDImageFramebufferCache.m in Sources */,
 				6E4A53EA20BCC7B2001621B5 /* AppDelegate.m in Sources */,
+				6EB1460120C3C7D400C37FC3 /* PDDImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
