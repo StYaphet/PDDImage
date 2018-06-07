@@ -40,16 +40,16 @@ void reportAvailableMemoryForPDDImage(NSString *tag);
 @interface PDDImageOutput : NSObject {
 
     // 输出的帧缓存对象
-    PDDImageFramebuffer *outputFramebuffer;
+    PDDImageFramebuffer *_outputFramebuffer;
     // target列表，target纹理索引列表
-    NSMutableArray *targets, *targetTextureIndices;
+    NSMutableArray *_targets, *_targetTextureIndices;
     // 纹理尺寸
-    CGSize inputTextureSize, cachedMaximumOutputSize, forcedMaximumSize;
-    BOOL overrideInputSize;
-    BOOL allTargetsWantMonocharomeData;
+    CGSize _inputTextureSize, _cachedMaximumOutputSize, _forcedMaximumSize;
+    BOOL _overrideInputSize;
+    BOOL _allTargetsWantMonocharomeData;
 
     // 设置下一帧提取图片
-    BOOL usingNextFrameForImageCapture;
+    BOOL _usingNextFrameForImageCapture;
 }
 
 // 是否使用mipmaps
@@ -63,7 +63,7 @@ void reportAvailableMemoryForPDDImage(NSString *tag);
 @property (nonatomic, copy) void(^frameProcessingCompletionBlock)(PDDImageOutput *, CMTime);
 // 是否启用渲染目标
 @property (nonatomic, assign) BOOL enabled;
-@property (nonatomic, assign) GPUTextureOptions *outputTextureOptions;
+@property (nonatomic, assign) GPUTextureOptions outputTextureOptions;
 
 - (void)setInputFramebufferForTarget:(id<PDDImageInput>)target atIndex:(NSInteger)inputTextureIndex;
 - (PDDImageFramebuffer *)framebufferForOutput;
