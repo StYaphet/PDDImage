@@ -41,7 +41,7 @@ static void *openGLESContextQueueKey;
         return nil;
     }
 
-    openGLESContextQueueKey = &openGLESContextQueueKey;x
+    openGLESContextQueueKey = &openGLESContextQueueKey;
     _contextQueue = dispatch_queue_create("com.bytedance.PDDImage.openGLESContextQueue", PDDImageDefaultQueueAttribute());
 
 #if OS_OBJECT_USE_OBJC
